@@ -13,7 +13,7 @@ def post_analyze_Note():
     if not data or "text" not in data:
         return jsonify({"status": "error", "message": "Missing 'text' in request body"}), 400
 
-    success, result_text = model.generateResponse(data["text"])
+    success, result_text = model.analyzeNote(data["text"])
     
     if success: 
         return jsonify({

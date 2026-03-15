@@ -7,31 +7,21 @@ def init_api(trained_model):
     global model
     model = trained_model
 
-@app.route("/analyzerResult", methods=["GET"])
-def get_analyzer_result():
-    output = model.get_response()
-    
-    return jsonify({
-        "status":"ok",
-        "message" : output
-    })
-
-@app.route("/inputText", methods=["POST"]) #WHAT IF I WROTE Post
-def post_input_text():
-    
-    data = request.get_json(force=True)
+@app.route("/analyzeNote", methods=["POST"])
+def post_analyze_Note():
+    data = request.get_json()
     if not data or "text" not in data:
         return jsonify({"status": "error", "message": "Missing 'text' in request body"}), 400
-  
 
-    error_message = model.generateResponse(data["text"])
-    if error_message is None: 
+    success, result_text = model.generateResponse(data["text"])
+    
+    if success: 
         return jsonify({
             "status": "ok",
-            "message": "Successfully generated response."
+            "message": result_text
         })
     else:
         return jsonify({
             "status": "error",
-            "message": error_message
+            "message": result_text 
         }), 500

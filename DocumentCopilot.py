@@ -35,28 +35,22 @@ class DocumentCopilot:
     def __init__(self, model, key):
         self.__model = model
         self.__key = key
-        self.__response = None
 
-    def generateResponse(self, user_input):
+    def analyzeNote(self, user_input):
         if not self.__model:
-            return "No model has been set."
+            return False, "No model has been set."
         
         client = genai.Client(api_key=self.__key)
+        final_prompt = self.PROMPT.format(user_input=user_input)
         
         try:
             response = client.models.generate_content(
                 model=self.__model, 
-                contents= self.PROMPT.format(user_input=user_input)
+                contents=final_prompt
             )
-            self.__response = response.text
-            return None 
+            return True, response.text 
+            
         except Exception as e:
             print(e)
-            return str(e) 
-
-    def get_response(self):
-        if(self.__response != None):
-            return self.__response
-        
-        return "No input given or generation failed."
+            return False, str(e)
     
